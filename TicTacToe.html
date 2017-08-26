@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tic Tac Toe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <table align="center">
+            <tr>
+                <td align="center">
+                    <canvas id="board" width="200" height="200"></canvas>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <button id="restart_button" onclick="clearBoard()">Restart Game</button>
+                </td>
+            </tr>
+        </table>
+        
+        <script>
+            var c = document.getElementById("board");
+            c.addEventListener('click', function(event) {
+                var rect = c.getBoundingClientRect();
+                var x = event.clientX - rect.left;
+                var y = event.clientY - rect.top;
+                
+                x = Math.floor(x / (c.width / 3));
+                y = Math.floor(y / (c.height / 3));
+                
+                placeMarker(x, y);
+            });
+            drawBoard();
+            
+            function drawBoard() {
+                var c = document.getElementById("board");
+                var ctx = c.getContext("2d");
+                ctx.beginPath();
+                ctx.moveTo(c.width / 3, 0);
+                ctx.lineTo(c.width / 3, c.height);
+                ctx.moveTo(2 * c.width / 3, 0);
+                ctx.lineTo(2 * c.width / 3, c.height);
+                ctx.moveTo(0, c.height / 3);
+                ctx.lineTo(c.width, c.height / 3);
+                ctx.moveTo(0, 2 * c.height / 3);
+                ctx.lineTo(c.width, 2 * c.height / 3);
+                ctx.stroke();
+            }
+            
+            var boardStatus = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+            var markerCount = 0;
+            function placeMarker(x, y) {
+                if (markerCount === 9) {
+                    return;
+                }
+                if (boardStatus[x][y] === 1) {
+                    return;
+                }
+                boardStatus[x][y] = 1;
+                
+                var c = document.getElementById("board");
+                x = c.width / 6 + x * c.width / 3;
+                y = c.height / 6 + y * c.height / 3;
+                
+                if (markerCount % 2 === 0) {
+                    placeX(x, y);
+                } else {
+                    placeO(x, y);
+                }
+                
+                markerCount += 1;
+                if (markerCount === 9) {
+                    var c = document.getElementById("board");
+                    var ctx = c.getContext("2d");
+                    
+                    ctx.fillStyle = "rgba(190, 190, 190, 0.85)";
+                    ctx.fillRect(15, 70, c.width - 30, c.height - 140);
+                    ctx.strokStyle = "rgba(200, 200, 200, 1.0)";
+                    ctx.rect(15, 70, c.width - 30, c.height - 140);
+                    ctx.stroke();
+                    
+                    ctx.font = "30px Arial";
+                    ctx.fillStyle = "White";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText("Game Over!", c.width / 2, c.height / 2);
+                }
+            }
+            
+            function placeX(x, y) {
+                var c = document.getElementById("board");
+                var ctx = c.getContext("2d");
+                ctx.beginPath();
+                ctx.moveTo(x - 15, y - 15);
+                ctx.lineTo(x + 15, y + 15);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x - 15, y + 15);
+                ctx.lineTo(x + 15, y - 15);
+                ctx.stroke();
+            }
+            
+            function placeO(x, y) {
+                var c = document.getElementById("board");
+                var ctx = c.getContext("2d");
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2, false);
+                ctx.stroke();
+            }
+            
+            function clearCanvas() {
+                var c = document.getElementById("board");
+                var ctx = c.getContext("2d");
+                ctx.clearRect(0, 0, c.width, c.height);
+            }
+            
+            function clearBoard() {
+                markerCount = 0;
+                for (var i = 0; i < 3; ++i) {
+                    for (var j = 0; j < 3; ++j) {
+                        boardStatus[i][j] = 0;
+                    }
+                }
+                clearCanvas();
+                drawBoard();
+            }
+        </script>
+        
+    </body>
+</html>
